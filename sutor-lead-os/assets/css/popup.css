@@ -1,0 +1,272 @@
+/* Sutor Lead OS — scoped so theme / Elementor cannot blow up the FAB or clip the modal */
+#sutor-lead-os-root.slos-root,
+#sutor-lead-os-root.slos-root * {
+  box-sizing: border-box;
+}
+#sutor-lead-os-root.slos-root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  color: #0f172a;
+  -webkit-text-size-adjust: 100%;
+}
+
+body.slos-lock {
+  overflow: hidden !important;
+}
+
+/* Hide common competing chat / WhatsApp FABs while Lead OS is open */
+body.slos-lock .elementor-widget-whatsapp,
+body.slos-lock .elementor-widget-uael-woo-add-to-cart,
+body.slos-lock [class*="whatsapp"][class*="float"],
+body.slos-lock [class*="WhatsApp"][class*="float"],
+body.slos-lock .joinchat,
+body.slos-lock .joinchat__button,
+body.slos-lock .wa__btn_popup,
+body.slos-lock .nt-whatsapp-button,
+body.slos-lock #wa-widget,
+body.slos-lock .floating-wpp,
+body.slos-lock .wpcf7-whatsapp,
+body.slos-lock a[href*="wa.me"][style*="fixed"],
+body.slos-lock a[href*="api.whatsapp.com"][style*="fixed"],
+body.slos-lock .e-n-menu-wrapper,
+body.slos-lock .elementor-location-popup {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#sutor-lead-os-root .slos-fab {
+  all: unset;
+  position: fixed !important;
+  right: 16px !important;
+  bottom: 16px !important;
+  z-index: 2147483000 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  max-width: calc(100vw - 32px) !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 12px 16px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #25d366 !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22) !important;
+  cursor: pointer !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+#sutor-lead-os-root .slos-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28) !important;
+}
+#sutor-lead-os-root .slos-fab-icon {
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+#sutor-lead-os-root .slos-fab-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 46vw;
+}
+
+#sutor-lead-os-root .slos-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.55) !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 2147483001 !important;
+}
+#sutor-lead-os-root .slos-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#sutor-lead-os-root .slos-modal {
+  position: fixed !important;
+  right: 16px !important;
+  bottom: 76px !important;
+  left: auto !important;
+  top: auto !important;
+  width: min(400px, calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: min(78vh, 720px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  border-radius: 18px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28) !important;
+  z-index: 2147483002 !important;
+  transform: translateY(12px) scale(0.98);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  color: #0f172a !important;
+}
+#sutor-lead-os-root .slos-modal.is-open {
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#sutor-lead-os-root .slos-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 12px;
+  padding: 16px 16px 10px !important;
+  border-bottom: 1px solid #eef2f7 !important;
+  background: #fff !important;
+  flex: 0 0 auto !important;
+}
+#sutor-lead-os-root .slos-title {
+  margin: 0 !important;
+  font-size: 18px !important;
+  line-height: 1.3 !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+#sutor-lead-os-root .slos-subtitle {
+  margin: 6px 0 0 !important;
+  font-size: 13px !important;
+  color: #64748b !important;
+  line-height: 1.45 !important;
+}
+#sutor-lead-os-root .slos-close {
+  border: 0 !important;
+  background: #f1f5f9 !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  border-radius: 999px !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  color: #334155 !important;
+  flex: 0 0 auto !important;
+  padding: 0 !important;
+}
+
+#sutor-lead-os-root .slos-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 16px 4px !important;
+  min-height: 0 !important;
+}
+#sutor-lead-os-root .slos-form { padding: 0 !important; margin: 0 !important; }
+#sutor-lead-os-root .slos-field {
+  border: 0 !important;
+  margin: 0 0 14px !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+}
+#sutor-lead-os-root .slos-field legend {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 8px !important;
+  padding: 0 !important;
+  float: none !important;
+  width: auto !important;
+}
+#sutor-lead-os-root .slos-options {
+  display: grid !important;
+  gap: 8px !important;
+}
+#sutor-lead-os-root .slos-option {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  padding: 11px 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  background: #fff !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+#sutor-lead-os-root .slos-option:hover {
+  border-color: #86efac !important;
+  background: #f0fdf4 !important;
+}
+#sutor-lead-os-root .slos-option input {
+  margin-top: 3px !important;
+  accent-color: #16a34a;
+  flex: 0 0 auto;
+}
+#sutor-lead-os-root .slos-text {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  background: #fff !important;
+  color: #0f172a !important;
+}
+#sutor-lead-os-root .slos-text:focus {
+  outline: 2px solid #86efac !important;
+  border-color: #16a34a !important;
+}
+
+#sutor-lead-os-root .slos-footer {
+  padding: 12px 16px 16px !important;
+  border-top: 1px solid #eef2f7 !important;
+  background: #fff !important;
+  flex: 0 0 auto !important;
+}
+#sutor-lead-os-root .slos-status {
+  min-height: 1.2em;
+  margin: 0 0 10px !important;
+  font-size: 13px !important;
+  color: #475569 !important;
+}
+#sutor-lead-os-root .slos-status.is-error { color: #b91c1c !important; }
+#sutor-lead-os-root .slos-status.is-ok { color: #15803d !important; }
+#sutor-lead-os-root .slos-cta {
+  all: unset;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border-radius: 12px !important;
+  padding: 14px 16px !important;
+  background: #25d366 !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  text-align: center !important;
+}
+#sutor-lead-os-root .slos-cta:disabled { opacity: 0.65; cursor: wait !important; }
+#sutor-lead-os-root .slos-cta-icon { font-size: 18px !important; }
+
+@media (max-width: 640px) {
+  #sutor-lead-os-root .slos-fab {
+    right: 12px !important;
+    bottom: 12px !important;
+    padding: 11px 14px !important;
+    font-size: 13px !important;
+  }
+  #sutor-lead-os-root .slos-modal {
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: min(92vh, 100dvh) !important;
+    border-radius: 18px 18px 0 0 !important;
+  }
+}

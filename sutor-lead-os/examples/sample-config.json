@@ -1,0 +1,55 @@
+{
+  "client_id": "caringhome",
+  "form_id": "home_care_lead",
+  "popup_title": "免費長者照顧咨詢",
+  "popup_subtitle": "回答幾條短問題，我哋會即刻喺 WhatsApp 同你跟進。",
+  "fab_label": "免費咨詢",
+  "cta_label": "傳送資料到 WhatsApp",
+  "close_label": "關閉",
+  "auto_show_fab": 1,
+  "whatsapp_number": "85290000000",
+  "whatsapp_template": "你好，我想咨詢長者照顧服務。\nLead: {lead_id}\n{answers}",
+  "enable_gtm": 1,
+  "questions": [
+    {
+      "id": "need",
+      "label": "你而家最需要邊方面協助？",
+      "type": "single",
+      "required": 1,
+      "options": [
+        { "id": "hire_helper", "label": "聘請外傭／照顧員" },
+        { "id": "training", "label": "照顧員培訓課程" },
+        { "id": "docs", "label": "文件／續約支援" },
+        { "id": "other", "label": "其他咨詢" }
+      ]
+    },
+    {
+      "id": "timeline",
+      "label": "大概幾時需要開始？",
+      "type": "single",
+      "required": 1,
+      "options": [
+        { "id": "asap", "label": "盡快（兩星期內）" },
+        { "id": "month", "label": "一個月內" },
+        { "id": "later", "label": "先了解先" }
+      ]
+    },
+    {
+      "id": "phone",
+      "label": "聯絡電話",
+      "type": "phone",
+      "required": 1,
+      "options": []
+    }
+  ],
+  "qualification_rules": [
+    {
+      "id": "rule_asap",
+      "question_id": "timeline",
+      "operator": "in",
+      "answer_ids": ["asap", "month"],
+      "reason": "near_term",
+      "reason_label": "Near-term need"
+    }
+  ]
+}

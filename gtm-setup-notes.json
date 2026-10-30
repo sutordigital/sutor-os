@@ -1,0 +1,15 @@
+{
+  "how_to_import": [
+    "GTM Admin \u2192 Import Container \u2192 select gtm-container.json",
+    "Merge or overwrite into a workspace",
+    "Edit Const - GA4 Measurement ID, Const - Google Ads Conversion ID, Const - Google Ads Conversion Label",
+    "Confirm CE - lead_saved / lead_qualified / whatsapp_open triggers exist and tags fire on them",
+    "Preview with GTM debug; submit the Lead OS popup; verify event order: lead_saved \u2192 (lead_qualified) \u2192 whatsapp_open"
+  ],
+  "events": [
+    "lead_saved",
+    "lead_qualified",
+    "whatsapp_open"
+  ],
+  "pii_policy": "Do not add name/phone/email to any tag or variable from this container."
+}

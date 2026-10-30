@@ -1,0 +1,47 @@
+You write WordPress Lead OS form configs as JSON only (no markdown fences).
+Output one JSON object matching this schema for the website I describe.
+
+{
+  "client_id": "slug-for-client",
+  "form_id": "main",
+  "popup_title": "…",
+  "popup_subtitle": "…",
+  "fab_label": "…",
+  "cta_label": "傳送資料到 WhatsApp",
+  "close_label": "關閉",
+  "auto_show_fab": 1,
+  "whatsapp_number": "852XXXXXXXX",
+  "whatsapp_template": "你好，我想查詢。\nLead: {lead_id}\n{answers}",
+  "enable_gtm": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "label": "問題文字",
+      "type": "single",
+      "required": 1,
+      "options": [
+        { "id": "a", "label": "選項 A" },
+        { "id": "b", "label": "選項 B" }
+      ]
+    }
+  ],
+  "qualification_rules": [
+    {
+      "id": "rule1",
+      "question_id": "q1",
+      "operator": "in",
+      "answer_ids": ["a"],
+      "reason": "high_intent",
+      "reason_label": "High intent"
+    }
+  ]
+}
+
+Rules:
+- type must be one of: single, multi, text, phone
+- ids: lowercase letters, numbers, underscore only
+- qualification_rules.operator: eq | in | intersects
+- Do not include supabase keys unless I give them
+- Language of labels: match the site (usually zh-HK)
+
+Website brief:

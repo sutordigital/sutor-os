@@ -1,0 +1,46 @@
+.slos-admin .slos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 960px) { .slos-admin .slos-grid { grid-template-columns: 1fr; } }
+.slos-admin .slos-card {
+  background: #fff; border: 1px solid #dcdcde; border-radius: 8px;
+  padding: 16px 18px; margin: 16px 0;
+}
+.slos-admin .slos-card h2 { margin-top: 0; }
+.slos-admin .slos-card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.slos-admin label.slos-field, .slos-admin .slos-card > label {
+  display: block; margin: 0 0 12px; font-weight: 600;
+}
+.slos-admin input[type=text], .slos-admin input[type=url], .slos-admin textarea, .slos-admin select {
+  width: 100%; margin-top: 4px; font-weight: 400;
+}
+.slos-admin .slos-check { font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.slos-admin .slos-q-card, .slos-admin .slos-rule-card {
+  border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 0 0 12px; background: #f8fafc;
+}
+.slos-admin .slos-q-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.slos-admin .slos-q-actions { display: flex; gap: 6px; }
+.slos-admin .slos-options { margin-top: 8px; padding: 10px; background: #fff; border-radius: 6px; border: 1px dashed #cbd5e1; }
+.slos-admin .slos-opt-row { display: grid; grid-template-columns: 1fr 1.4fr auto auto auto; gap: 8px; align-items: end; margin-bottom: 8px; }
+.slos-admin .slos-inline { margin: 0; }
+.slos-admin .slos-rule-answers { margin: 8px 0 12px; padding: 8px; background: #fff; border-radius: 6px; }
+
+.slos-import-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
+.slos-ai-help { margin-top:8px; }
+.slos-ai-help summary { cursor:pointer; color:#2271b1; }
+#slos-import-json { width:100%; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; }
+
+.slos-master-toggle { margin-top: 12px; }
+.slos-toggle-row { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+.slos-switch { display:inline-flex; align-items:center; gap:10px; cursor:pointer; font-weight:600; user-select:none; }
+.slos-switch input { position:absolute; opacity:0; width:0; height:0; }
+.slos-switch-ui {
+  width:48px; height:28px; border-radius:999px; background:#c3c4c7; position:relative;
+  transition: background .15s ease; flex:0 0 auto;
+}
+.slos-switch-ui::after {
+  content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%;
+  background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition: transform .15s ease;
+}
+.slos-switch input:checked + .slos-switch-ui { background:#00a32a; }
+.slos-switch input:checked + .slos-switch-ui::after { transform: translateX(20px); }
+.slos-switch input:focus-visible + .slos-switch-ui { outline:2px solid #2271b1; outline-offset:2px; }
+.slos-switch-label { min-width:2em; }
