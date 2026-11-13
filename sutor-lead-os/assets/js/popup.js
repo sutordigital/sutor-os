@@ -239,7 +239,7 @@
           } catch (e) {}
           window.open(wa, '_blank', 'noopener');
         }
-        setStatus('已儲存。');
+        setStatus('');
         submitting = false;
         if (btn) btn.disabled = false;
       })
