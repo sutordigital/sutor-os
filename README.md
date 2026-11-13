@@ -12,7 +12,7 @@ Reusable WordPress plugin for floating WhatsApp lead capture. Each site edits it
    - WhatsApp number (digits with country code, e.g. `85295420762`)
    - Questions + answer options (repeater UI)
    - Qualification rules (OR logic, evaluated server-side)
-4. Leave **Auto-show floating button** on, place `[sutor_lead_os]` to open the popup on specific pages, or paste `[sutor_enquiry]` wherever you want an enquiry button.
+4. Leave **Auto-show floating button** on, place `[sutor_lead_os]` to open the popup on specific pages, paste `[sutor_enquiry]` for an enquiry button, or point your own link at `[sutor_enquiry_link]`.
 5. Import `gtm-container.json` into Google Tag Manager (or recreate the three triggers/tags). Set GA4 Measurement ID and Google Ads conversion ID/label variables.
 
 ### SiteGround note
@@ -97,6 +97,28 @@ The label defaults to the floating button label from **Lead OS → Form Settings
 | `open` | Set to `1` to also open the popup as soon as the page loads. |
 
 `[sutor_lead_os label="免費咨詢"]` and `[sutor_lead_os button="1"]` render the same button.
+
+### Custom link — `[sutor_enquiry_link]`
+
+Use your own button or link and point its URL at this shortcode. The click opens the **same** enquiry popup. It does not navigate away, and it does not start a second form.
+
+```html
+<a href="[sutor_enquiry_link]">免費咨詢</a>
+```
+
+In a page-builder link field, a menu URL, or an Elementor button link, paste:
+
+```
+[sutor_enquiry_link]
+```
+
+Those fields often do not expand shortcodes. WordPress URL sanitization may also store the value as `http://[sutor_enquiry_link]`. The popup script treats that literal href as the trigger. When the shortcode does run, it outputs `#sutor-enquiry`, which is safe to paste into a URL field as well:
+
+```html
+<a href="#sutor-enquiry">免費咨詢</a>
+```
+
+The **Lead popup** switch must stay on. **Auto-show floating button** can be off; the link still loads and opens the popup.
 
 ### Auto-open on a page — `[sutor_lead_os]`
 

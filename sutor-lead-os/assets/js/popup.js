@@ -52,6 +52,44 @@
     return n;
   }
 
+  // Keep in sync with the footer link bootstrap in class-sutor-lead-os-frontend.php.
+  function isEnquiryHref(anchor) {
+    if (!anchor || anchor.tagName !== 'A' || !anchor.getAttribute) return false;
+    var raw = anchor.getAttribute('href');
+    if (raw == null || raw === '') return false;
+    var value = String(raw).replace(/^\s+|\s+$/g, '').toLowerCase();
+    var decoded = value;
+    try { decoded = decodeURIComponent(value); } catch (e) {}
+    if (decoded.indexOf('[sutor_enquiry_link]') !== -1 || value.indexOf('%5bsutor_enquiry_link%5d') !== -1 || decoded.indexOf('%5bsutor_enquiry_link%5d') !== -1) {
+      return true;
+    }
+    var hashAt = decoded.indexOf('#');
+    if (hashAt === -1) return false;
+    var hash = decoded.slice(hashAt);
+    return hash === '#sutor-enquiry' || hash.indexOf('#sutor-enquiry?') === 0 || hash.indexOf('#sutor-enquiry&') === 0;
+  }
+
+  function armEnquiryLink(link) {
+    if (!link || link.getAttribute('data-slos-trigger') != null) return;
+    link.setAttribute('data-slos-trigger', '1');
+    link.setAttribute('aria-haspopup', 'dialog');
+    link.setAttribute('aria-controls', 'slos-modal');
+    if (!link.hasAttribute('aria-expanded')) link.setAttribute('aria-expanded', 'false');
+  }
+
+  function onEnquiryTriggerClick(ev) {
+    var trigger = ev.target && ev.target.closest ? ev.target.closest('[data-slos-trigger]') : null;
+    if (!trigger && ev.target && ev.target.closest) {
+      var link = ev.target.closest('a[href]');
+      if (isEnquiryHref(link)) trigger = link;
+    }
+    if (!trigger) return;
+    if (trigger.tagName === 'A') armEnquiryLink(trigger);
+    ev.preventDefault();
+    ev.stopPropagation();
+    openModal(trigger);
+  }
+
   function setTriggersExpanded(open) {
     var nodes = document.querySelectorAll('[data-slos-trigger], #sutor-lead-os-root .slos-fab');
     Array.prototype.forEach.call(nodes, function (n) {
@@ -295,13 +333,13 @@
     root.appendChild(overlay);
     root.appendChild(modal);
 
-    document.addEventListener('click', function (ev) {
-      var trigger = ev.target && ev.target.closest ? ev.target.closest('[data-slos-trigger]') : null;
-      if (!trigger) return;
-      ev.preventDefault();
-      ev.stopPropagation();
-      openModal(trigger);
-    }, true);
+    var linkNodes = document.querySelectorAll('a[href]');
+    Array.prototype.forEach.call(linkNodes, function (link) {
+      if (isEnquiryHref(link)) armEnquiryLink(link);
+    });
+
+    document.addEventListener('click', onEnquiryTriggerClick, true);
+    document.addEventListener('auxclick', onEnquiryTriggerClick, true);
 
     document.addEventListener('keydown', function (ev) {
       if (ev.key !== 'Escape' && ev.key !== 'Esc') return;
@@ -309,6 +347,14 @@
       ev.preventDefault();
       closeModal();
     });
+
+    window.SutorLeadOSControls = {
+      open: function (trigger) { openModal(trigger); }
+    };
+    if (window.__slosPendingTrigger) {
+      openModal(window.__slosPendingTrigger);
+      window.__slosPendingTrigger = null;
+    }
 
     if (document.querySelector('[data-slos-open]')) {
       openModal();

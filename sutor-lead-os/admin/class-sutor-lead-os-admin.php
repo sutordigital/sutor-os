@@ -143,6 +143,10 @@ class Sutor_Lead_OS_Admin {
 					<p><code>[sutor_enquiry label="立即查詢" align="center"]</code></p>
 					<p class="description">Default label is the floating button label<?php echo '' !== trim( (string) $settings['fab_label'] ) ? ' (currently <code>' . esc_html( $settings['fab_label'] ) . '</code>)' : ''; ?>. Optional attributes: <code>label</code>, <code>align</code> (<code>left</code>, <code>center</code>, <code>right</code>), <code>class</code>, <code>id</code>, and <code>open="1"</code> to open the popup immediately.</p>
 					<p class="description"><code>[sutor_lead_os]</code> loads the popup on that page and opens it immediately. <code>[sutor_lead_os label="免費咨詢"]</code> renders a button.</p>
+					<h3>Custom link</h3>
+					<p class="description">Use your own button or link. Set its URL to <code>[sutor_enquiry_link]</code>. The click opens this same popup and does not leave the page, including when the floating button is turned off.</p>
+					<pre style="background:#f6f7f7;padding:12px;border-radius:6px;overflow:auto;max-width:720px">&lt;a href="[sutor_enquiry_link]"&gt;免費咨詢&lt;/a&gt;</pre>
+					<p class="description">In a page builder link field (Elementor, button blocks, menus), paste <code>[sutor_enquiry_link]</code>. Builders often save that text as-is, or WordPress stores it as <code>http://[sutor_enquiry_link]</code>. Both open the popup. The shortcode expands to <code>#sutor-enquiry</code>, which you can also paste directly into a URL field.</p>
 				</section>
 
 				<section class="slos-card">

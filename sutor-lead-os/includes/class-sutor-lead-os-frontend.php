@@ -2,6 +2,12 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 class Sutor_Lead_OS_Frontend {
+	/**
+	 * Stable href for [sutor_enquiry_link]. Hash URLs survive esc_url(); the
+	 * literal shortcode often does not, so the front-end also accepts that string.
+	 */
+	const LINK_HREF = '#sutor-enquiry';
+
 	/** @var bool */
 	private static $shortcode_used = false;
 
@@ -14,9 +20,11 @@ class Sutor_Lead_OS_Frontend {
 	public static function init() {
 		add_shortcode( 'sutor_lead_os', array( __CLASS__, 'shortcode' ) );
 		add_shortcode( 'sutor_enquiry', array( __CLASS__, 'enquiry_shortcode' ) );
+		add_shortcode( 'sutor_enquiry_link', array( __CLASS__, 'enquiry_link_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'wp_footer', array( __CLASS__, 'maybe_render_root' ), 5 );
 		add_action( 'wp_footer', array( __CLASS__, 'maybe_render_root_late' ), 999 );
+		add_action( 'wp_footer', array( __CLASS__, 'boot_enquiry_links' ), 1000 );
 		add_filter( 'widget_text', array( __CLASS__, 'render_embedded_shortcodes' ) );
 		add_filter( 'widget_text_content', array( __CLASS__, 'render_embedded_shortcodes' ) );
 		add_filter( 'widget_custom_html_content', array( __CLASS__, 'render_embedded_shortcodes' ) );
@@ -65,6 +73,24 @@ class Sutor_Lead_OS_Frontend {
 	}
 
 	/**
+	 * URL for a custom link or page-builder button. Not a visible control.
+	 *
+	 * Expanded value is #sutor-enquiry. Page builders often store the shortcode
+	 * literally (or esc_url it to http://[sutor_enquiry_link]); popup.js treats
+	 * those hrefs as the same trigger.
+	 *
+	 * @return string
+	 */
+	public static function enquiry_link_shortcode() {
+		$settings = Sutor_Lead_OS_Settings::get();
+		if ( empty( $settings['enabled'] ) ) {
+			return '#';
+		}
+		self::mark_shortcode_used();
+		return self::LINK_HREF;
+	}
+
+	/**
 	 * Run only this plugin's shortcodes inside text / HTML widgets.
 	 *
 	 * @param string $content
@@ -74,7 +100,7 @@ class Sutor_Lead_OS_Frontend {
 		if ( ! is_string( $content ) || ! self::text_has_shortcode( $content ) ) {
 			return $content;
 		}
-		$regex = get_shortcode_regex( array( 'sutor_enquiry', 'sutor_lead_os' ) );
+		$regex = get_shortcode_regex( array( 'sutor_enquiry_link', 'sutor_enquiry', 'sutor_lead_os' ) );
 		$replaced = preg_replace_callback( '/' . $regex . '/', 'do_shortcode_tag', $content );
 		return is_string( $replaced ) ? $replaced : $content;
 	}
@@ -166,6 +192,112 @@ class Sutor_Lead_OS_Frontend {
 		if ( ! wp_script_is( 'sutor-lead-os', 'done' ) ) {
 			wp_print_scripts( 'sutor-lead-os' );
 		}
+	}
+
+	/**
+	 * When the floating button is off and the shortcode never ran (typical of a
+	 * page-builder URL field), watch the rendered DOM for enquiry hrefs and load
+	 * the same popup on demand.
+	 */
+	public static function boot_enquiry_links() {
+		if ( self::$root_printed ) {
+			return;
+		}
+		if ( function_exists( 'is_admin' ) && is_admin() ) {
+			return;
+		}
+		$settings = Sutor_Lead_OS_Settings::get();
+		if ( empty( $settings['enabled'] ) ) {
+			return;
+		}
+		$payload = Sutor_Lead_OS_Settings::public_config();
+		$ver = rawurlencode( SUTOR_LEAD_OS_VERSION );
+		$payload['_css'] = SUTOR_LEAD_OS_URL . 'assets/css/popup.css?ver=' . $ver;
+		$payload['_js']  = SUTOR_LEAD_OS_URL . 'assets/js/popup.js?ver=' . $ver;
+		$json = wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+		if ( ! is_string( $json ) ) {
+			return;
+		}
+		$script = <<<'JS'
+(function () {
+  if (document.getElementById('sutor-lead-os-root')) return;
+  var cfg = __SLOS_CONFIG__;
+  // Keep in sync with isEnquiryHref in assets/js/popup.js.
+  function isEnquiryHref(anchor) {
+    if (!anchor || anchor.tagName !== 'A' || !anchor.getAttribute) return false;
+    var raw = anchor.getAttribute('href');
+    if (raw == null || raw === '') return false;
+    var value = String(raw).replace(/^\s+|\s+$/g, '').toLowerCase();
+    var decoded = value;
+    try { decoded = decodeURIComponent(value); } catch (e) {}
+    if (decoded.indexOf('[sutor_enquiry_link]') !== -1 || value.indexOf('%5bsutor_enquiry_link%5d') !== -1 || decoded.indexOf('%5bsutor_enquiry_link%5d') !== -1) return true;
+    var hashAt = decoded.indexOf('#');
+    if (hashAt === -1) return false;
+    var hash = decoded.slice(hashAt);
+    return hash === '#sutor-enquiry' || hash.indexOf('#sutor-enquiry?') === 0 || hash.indexOf('#sutor-enquiry&') === 0;
+  }
+  var pending = null;
+  var loading = false;
+  function ensure() {
+    if (window.SutorLeadOSControls) {
+      if (pending) {
+        window.SutorLeadOSControls.open(pending);
+        pending = null;
+        window.__slosPendingTrigger = null;
+      }
+      return;
+    }
+    window.__slosPendingTrigger = pending;
+    if (loading) return;
+    loading = true;
+    window.SutorLeadOS = cfg;
+    if (!document.getElementById('sutor-lead-os-root')) {
+      var root = document.createElement('div');
+      root.id = 'sutor-lead-os-root';
+      root.className = 'slos-root';
+      root.setAttribute('aria-live', 'polite');
+      (document.body || document.documentElement).appendChild(root);
+    }
+    if (!document.getElementById('sutor-lead-os-css')) {
+      var css = document.createElement('link');
+      css.id = 'sutor-lead-os-css';
+      css.rel = 'stylesheet';
+      css.href = cfg._css;
+      (document.head || document.documentElement).appendChild(css);
+    }
+    if (!document.getElementById('sutor-lead-os-js')) {
+      var script = document.createElement('script');
+      script.id = 'sutor-lead-os-js';
+      script.src = cfg._js;
+      script.onload = function () {
+        if (window.__slosPendingTrigger && window.SutorLeadOSControls) {
+          window.SutorLeadOSControls.open(window.__slosPendingTrigger);
+          window.__slosPendingTrigger = null;
+          pending = null;
+        }
+      };
+      (document.body || document.documentElement).appendChild(script);
+    }
+  }
+  function onClick(ev) {
+    if (window.SutorLeadOSControls) return;
+    var link = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+    if (!isEnquiryHref(link)) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    pending = link;
+    ensure();
+  }
+  document.addEventListener('click', onClick, true);
+  document.addEventListener('auxclick', onClick, true);
+  var nodes = document.querySelectorAll('a[href]');
+  for (var i = 0; i < nodes.length; i++) {
+    if (isEnquiryHref(nodes[i])) { ensure(); break; }
+  }
+})();
+JS;
+		$script = str_replace( '__SLOS_CONFIG__', $json, $script );
+		echo '<script id="sutor-lead-os-link-boot">' . $script . '</script>';
 	}
 
 	/**
@@ -261,10 +393,18 @@ class Sutor_Lead_OS_Frontend {
 		if ( ! is_string( $text ) || '' === $text ) {
 			return false;
 		}
-		if ( has_shortcode( $text, 'sutor_enquiry' ) || has_shortcode( $text, 'sutor_lead_os' ) ) {
+		foreach ( array( 'sutor_enquiry_link', 'sutor_enquiry', 'sutor_lead_os' ) as $tag ) {
+			if ( has_shortcode( $text, $tag ) ) {
+				return true;
+			}
+		}
+		if ( false !== strpos( $text, '[sutor_enquiry' ) || false !== strpos( $text, '[sutor_lead_os' ) ) {
 			return true;
 		}
-		return false !== strpos( $text, '[sutor_enquiry' ) || false !== strpos( $text, '[sutor_lead_os' );
+		if ( false !== stripos( $text, '%5Bsutor_enquiry_link%5D' ) ) {
+			return true;
+		}
+		return false !== strpos( $text, '#sutor-enquiry' );
 	}
 
 	private static function query_has_shortcode() {
