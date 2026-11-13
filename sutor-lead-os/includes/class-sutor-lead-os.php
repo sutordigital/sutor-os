@@ -49,6 +49,7 @@ class Sutor_Lead_OS {
 			'cta_label'           => '傳送資料到 WhatsApp',
 			'close_label'         => '關閉',
 			'auto_show_fab'       => 1,
+			'dialog_position'     => 'bottom_right',
 			'whatsapp_number'     => '',
 			'whatsapp_template'   => "你好，我想咨詢。
 

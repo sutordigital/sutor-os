@@ -17,7 +17,9 @@ class Sutor_Lead_OS_Settings {
 		if ( ! is_array( $stored ) ) {
 			$stored = array();
 		}
-		return wp_parse_args( $stored, Sutor_Lead_OS::default_settings() );
+		$settings = wp_parse_args( $stored, Sutor_Lead_OS::default_settings() );
+		$settings['dialog_position'] = self::sanitize_dialog_position( $settings['dialog_position'] ?? '' );
+		return $settings;
 	}
 
 	/**
@@ -41,6 +43,7 @@ class Sutor_Lead_OS_Settings {
 		$clean['cta_label']         = sanitize_text_field( $raw['cta_label'] ?? '' );
 		$clean['close_label']       = sanitize_text_field( $raw['close_label'] ?? '' );
 		$clean['auto_show_fab']     = empty( $raw['auto_show_fab'] ) ? 0 : 1;
+		$clean['dialog_position']   = self::sanitize_dialog_position( $raw['dialog_position'] ?? '' );
 		$clean['whatsapp_number']   = preg_replace( '/[^0-9]/', '', (string) ( $raw['whatsapp_number'] ?? '' ) );
 		$clean['whatsapp_template'] = sanitize_textarea_field( $raw['whatsapp_template'] ?? '' );
 		$clean['enable_gtm']        = empty( $raw['enable_gtm'] ) ? 0 : 1;
@@ -52,6 +55,16 @@ class Sutor_Lead_OS_Settings {
 
 		update_option( SUTOR_LEAD_OS_OPTION, $clean, false );
 		return $clean;
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return string
+	 */
+	public static function sanitize_dialog_position( $value ) {
+		$value = sanitize_key( (string) $value );
+		$allowed = array( 'top_left', 'top_right', 'center', 'bottom_left', 'bottom_right' );
+		return in_array( $value, $allowed, true ) ? $value : 'bottom_right';
 	}
 
 	private static function sanitize_questions( $questions ) {
@@ -145,7 +158,8 @@ class Sutor_Lead_OS_Settings {
 			'fab_label'      => $s['fab_label'],
 			'cta_label'      => $s['cta_label'],
 			'close_label'    => $s['close_label'],
-			'auto_show_fab'  => (int) $s['auto_show_fab'],
+			'auto_show_fab'   => (int) $s['auto_show_fab'],
+			'dialog_position' => self::sanitize_dialog_position( $s['dialog_position'] ?? '' ),
 			'enable_gtm'     => (int) $s['enable_gtm'],
 			'questions'      => $s['questions'],
 			'rest_url'       => esc_url_raw( rest_url( 'sutor-lead-os/v1/leads' ) ),

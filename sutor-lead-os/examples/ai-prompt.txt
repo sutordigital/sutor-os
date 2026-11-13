@@ -10,6 +10,7 @@ Output one JSON object matching this schema for the website I describe.
   "cta_label": "傳送資料到 WhatsApp",
   "close_label": "關閉",
   "auto_show_fab": 1,
+  "dialog_position": "bottom_right",
   "whatsapp_number": "852XXXXXXXX",
   "whatsapp_template": "你好，我想查詢。\nLead: {lead_id}\n{answers}",
   "enable_gtm": 1,
@@ -41,6 +42,7 @@ Rules:
 - type must be one of: single, multi, text, phone
 - ids: lowercase letters, numbers, underscore only
 - qualification_rules.operator: eq | in | intersects
+- dialog_position: top_left | top_right | center | bottom_left | bottom_right (default bottom_right)
 - Do not include supabase keys unless I give them
 - Language of labels: match the site (usually zh-HK)
 

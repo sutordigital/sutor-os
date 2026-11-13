@@ -35,6 +35,8 @@
     state.cta_label = document.getElementById('slos-cta-label').value;
     state.close_label = document.getElementById('slos-close-label').value;
     state.auto_show_fab = document.getElementById('slos-auto-fab').checked ? 1 : 0;
+    var pos = document.getElementById('slos-dialog-position');
+    state.dialog_position = pos && pos.value ? pos.value : (state.dialog_position || 'bottom_right');
     state.client_id = document.getElementById('slos-client-id').value;
     state.form_id = document.getElementById('slos-form-id').value;
     state.whatsapp_number = document.getElementById('slos-wa-number').value;
@@ -284,6 +286,11 @@
     if (enLabel) enLabel.textContent = en && en.checked ? 'On' : 'Off';
     var fab = document.getElementById('slos-auto-fab');
     if (fab) fab.checked = !!state.auto_show_fab;
+    var posEl = document.getElementById('slos-dialog-position');
+    if (posEl) {
+      var positions = ['top_left', 'top_right', 'center', 'bottom_left', 'bottom_right'];
+      posEl.value = positions.indexOf(state.dialog_position) >= 0 ? state.dialog_position : 'bottom_right';
+    }
     var gtm = document.getElementById('slos-enable-gtm');
     if (gtm) gtm.checked = !!state.enable_gtm;
   }
@@ -302,6 +309,7 @@
     '  "cta_label": "傳送資料到 WhatsApp",',
     '  "close_label": "關閉",',
     '  "auto_show_fab": 1,',
+    '  "dialog_position": "bottom_right",',
     '  "whatsapp_number": "852XXXXXXXX",',
     '  "whatsapp_template": "你好，我想查詢。\\nLead: {lead_id}\\n{answers}",',
     '  "enable_gtm": 1,',
@@ -333,6 +341,7 @@
     '- type must be one of: single, multi, text, phone',
     '- ids: lowercase letters, numbers, underscore only',
     '- qualification_rules.operator: eq | in | intersects',
+    '- dialog_position: top_left | top_right | center | bottom_left | bottom_right (default bottom_right)',
     '- Do not include supabase keys unless I give them',
     '- Language of labels: match the site (usually zh-HK)',
     '',
@@ -359,7 +368,7 @@
     var next = JSON.parse(JSON.stringify(state));
     var keys = [
       'enabled','client_id','form_id','popup_title','popup_subtitle','fab_label','cta_label',
-      'close_label','auto_show_fab','whatsapp_number','whatsapp_template','enable_gtm',
+      'close_label','auto_show_fab','dialog_position','whatsapp_number','whatsapp_template','enable_gtm',
       'supabase_url','supabase_anon_key','questions','qualification_rules'
     ];
     keys.forEach(function (k) {
@@ -401,6 +410,8 @@
     if (next.enabled === undefined) next.enabled = 1;
     next.enabled = next.enabled ? 1 : 0;
     next.auto_show_fab = next.auto_show_fab ? 1 : 0;
+    var dialogPositions = ['top_left', 'top_right', 'center', 'bottom_left', 'bottom_right'];
+    if (dialogPositions.indexOf(next.dialog_position) < 0) next.dialog_position = 'bottom_right';
     next.enable_gtm = next.enable_gtm ? 1 : 0;
     return next;
   }

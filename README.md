@@ -12,7 +12,7 @@ Reusable WordPress plugin for floating WhatsApp lead capture. Each site edits it
    - WhatsApp number (digits with country code, e.g. `85295420762`)
    - Questions + answer options (repeater UI)
    - Qualification rules (OR logic, evaluated server-side)
-4. Leave **Auto-show floating button** on, or place shortcode `[sutor_lead_os]` on specific pages.
+4. Leave **Auto-show floating button** on, place `[sutor_lead_os]` to open the popup on specific pages, paste `[sutor_enquiry]` for an enquiry button, or point your own link at `[sutor_enquiry_link]`.
 5. Import `gtm-container.json` into Google Tag Manager (or recreate the three triggers/tags). Set GA4 Measurement ID and Google Ads conversion ID/label variables.
 
 ### SiteGround note
@@ -67,9 +67,80 @@ Never put names, phones or emails in dataLayer.
 
 See `supabase/migration.sql` and `supabase/sutor-lead-ingest/index.ts`. Leave URL/key blank to keep everything in WordPress only.
 
-## Shortcode
+## Dialog position
 
-`[sutor_lead_os]` — also opens the modal when present on the page.
+**Lead OS → Form Settings → Dialog position** (`dialog_position`) chooses where the enquiry dialog opens. The floating button, `[sutor_enquiry]`, and `[sutor_enquiry_link]` all use this position. The floating button itself stays in the bottom-right corner.
+
+| Value | Label |
+| --- | --- |
+| `top_left` | Top left |
+| `top_right` | Top right |
+| `center` | Middle (center of the screen) |
+| `bottom_left` | Low left (bottom left) |
+| `bottom_right` | Low right (bottom right) |
+
+`bottom_right` is the default, so existing sites stay in the bottom-right corner until the setting is changed. On small screens that default is still the full-width sheet along the bottom. Other positions stay inset on both desktop and mobile, and a long form scrolls inside the dialog.
+
+## Shortcodes
+
+### Enquiry button — `[sutor_enquiry]`
+
+Paste this into a page, post, text widget, or a page-builder shortcode block. It prints a button that opens the **same** enquiry popup as the floating button (same questions, lead save, qualification, GTM events, and WhatsApp handoff).
+
+The button still works when **Auto-show floating button** is off. On that page the plugin loads the popup assets and does not render the floating button unless `[sutor_lead_os]` is also present. The **Lead popup** switch in Form Settings must stay on — that switch turns the popup itself off.
+
+```
+[sutor_enquiry]
+```
+
+The label defaults to the floating button label from **Lead OS → Form Settings** (shipped default: `免費咨詢`).
+
+```
+[sutor_enquiry label="立即查詢"]
+[sutor_enquiry label="WhatsApp 查詢" align="center"]
+[sutor_enquiry label="免費咨詢" class="my-cta" id="hero-enquiry" align="right"]
+[sutor_enquiry open="1"]
+```
+
+| Attribute | Description |
+| --- | --- |
+| `label` | Button text. Defaults to the floating button label, then `免費咨詢`. |
+| `align` | `left` (default), `center`, or `right`. |
+| `class` | Extra CSS classes added to the button. |
+| `id` | Optional `id` on the button. |
+| `open` | Set to `1` to also open the popup as soon as the page loads. |
+
+`[sutor_lead_os label="免費咨詢"]` and `[sutor_lead_os button="1"]` render the same button.
+
+### Custom link — `[sutor_enquiry_link]`
+
+Use your own button or link and point its URL at this shortcode. The click opens the **same** enquiry popup. It does not navigate away, and it does not start a second form.
+
+```html
+<a href="[sutor_enquiry_link]">免費咨詢</a>
+```
+
+In a page-builder link field, a menu URL, or an Elementor button link, paste:
+
+```
+[sutor_enquiry_link]
+```
+
+Those fields often do not expand shortcodes. WordPress URL sanitization may also store the value as `http://[sutor_enquiry_link]`. The popup script treats that literal href as the trigger. When the shortcode does run, it outputs `#sutor-enquiry`, which is safe to paste into a URL field as well:
+
+```html
+<a href="#sutor-enquiry">免費咨詢</a>
+```
+
+The **Lead popup** switch must stay on. **Auto-show floating button** can be off; the link still loads and opens the popup.
+
+### Auto-open on a page — `[sutor_lead_os]`
+
+```
+[sutor_lead_os]
+```
+
+Loads the popup on that page and opens it immediately. With **Auto-show floating button** turned off, pages that use this shortcode still show the floating button so the form can be reopened.
 
 ## Requirements
 

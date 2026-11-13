@@ -1,12 +1,12 @@
 (function () {
   'use strict';
   var cfg = window.SutorLeadOS || {};
-  var root = document.getElementById('sutor-lead-os-root');
-  if (!root) return;
+  var root = null;
 
   var ATTR_KEYS = ['gclid', 'gbraid', 'wbraid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
   var submitting = false;
   var lastLeadId = null;
+  var lastTrigger = null;
 
   function qs(name) {
     try {
@@ -52,16 +52,80 @@
     return n;
   }
 
-  function openModal() {
-    root.querySelector('.slos-overlay').classList.add('is-open');
-    root.querySelector('.slos-modal').classList.add('is-open');
+  // Keep in sync with the footer link bootstrap in class-sutor-lead-os-frontend.php.
+  function isEnquiryHref(anchor) {
+    if (!anchor || anchor.tagName !== 'A' || !anchor.getAttribute) return false;
+    var raw = anchor.getAttribute('href');
+    if (raw == null || raw === '') return false;
+    var value = String(raw).replace(/^\s+|\s+$/g, '').toLowerCase();
+    var decoded = value;
+    try { decoded = decodeURIComponent(value); } catch (e) {}
+    if (decoded.indexOf('[sutor_enquiry_link]') !== -1 || value.indexOf('%5bsutor_enquiry_link%5d') !== -1 || decoded.indexOf('%5bsutor_enquiry_link%5d') !== -1) {
+      return true;
+    }
+    var hashAt = decoded.indexOf('#');
+    if (hashAt === -1) return false;
+    var hash = decoded.slice(hashAt);
+    return hash === '#sutor-enquiry' || hash.indexOf('#sutor-enquiry?') === 0 || hash.indexOf('#sutor-enquiry&') === 0;
+  }
+
+  function armEnquiryLink(link) {
+    if (!link || link.getAttribute('data-slos-trigger') != null) return;
+    link.setAttribute('data-slos-trigger', '1');
+    link.setAttribute('aria-haspopup', 'dialog');
+    link.setAttribute('aria-controls', 'slos-modal');
+    if (!link.hasAttribute('aria-expanded')) link.setAttribute('aria-expanded', 'false');
+  }
+
+  function onEnquiryTriggerClick(ev) {
+    var trigger = ev.target && ev.target.closest ? ev.target.closest('[data-slos-trigger]') : null;
+    if (!trigger && ev.target && ev.target.closest) {
+      var link = ev.target.closest('a[href]');
+      if (isEnquiryHref(link)) trigger = link;
+    }
+    if (!trigger) return;
+    if (trigger.tagName === 'A') armEnquiryLink(trigger);
+    ev.preventDefault();
+    ev.stopPropagation();
+    openModal(trigger);
+  }
+
+  function setTriggersExpanded(open) {
+    var nodes = document.querySelectorAll('[data-slos-trigger], #sutor-lead-os-root .slos-fab');
+    Array.prototype.forEach.call(nodes, function (n) {
+      n.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+
+  function openModal(trigger) {
+    var overlay = root.querySelector('.slos-overlay');
+    var modal = root.querySelector('.slos-modal');
+    if (!overlay || !modal) return;
+    overlay.classList.add('is-open');
+    modal.classList.add('is-open');
     document.body.classList.add('slos-lock');
+    setTriggersExpanded(true);
+    if (trigger && trigger.nodeType === 1) {
+      lastTrigger = trigger;
+      var closeBtn = modal.querySelector('.slos-close');
+      if (closeBtn && closeBtn.focus) {
+        try { closeBtn.focus(); } catch (e) {}
+      }
+    }
   }
 
   function closeModal() {
-    root.querySelector('.slos-overlay').classList.remove('is-open');
-    root.querySelector('.slos-modal').classList.remove('is-open');
+    var overlay = root.querySelector('.slos-overlay');
+    var modal = root.querySelector('.slos-modal');
+    if (overlay) overlay.classList.remove('is-open');
+    if (modal) modal.classList.remove('is-open');
     document.body.classList.remove('slos-lock');
+    setTriggersExpanded(false);
+    if (lastTrigger && lastTrigger.focus) {
+      var back = lastTrigger;
+      lastTrigger = null;
+      try { back.focus(); } catch (e) {}
+    }
   }
 
   function collectAnswers() {
@@ -175,7 +239,7 @@
           } catch (e) {}
           window.open(wa, '_blank', 'noopener');
         }
-        setStatus('已儲存。Lead ID: ' + d.lead_id);
+        setStatus('');
         submitting = false;
         if (btn) btn.disabled = false;
       })
@@ -220,21 +284,41 @@
   }
 
   function mount() {
-    var fab = el('button', {
-      type: 'button',
-      className: 'slos-fab',
-      'aria-label': cfg.fab_label || 'Open form',
-      onClick: openModal
-    }, [
-      el('span', { className: 'slos-fab-icon', html: '&#128172;' }),
-      el('span', { className: 'slos-fab-text', text: cfg.fab_label || '免費網站增長檢查' })
-    ]);
+    var showFab = !!cfg.auto_show_fab || !!document.querySelector('.slos-shortcode-anchor');
+    if (showFab) {
+      var fab = el('button', {
+        type: 'button',
+        className: 'slos-fab',
+        'aria-label': cfg.fab_label || 'Open form',
+        'aria-haspopup': 'dialog',
+        'aria-controls': 'slos-modal',
+        'aria-expanded': 'false',
+        onClick: function () { openModal(this); }
+      }, [
+        el('span', { className: 'slos-fab-icon', 'aria-hidden': 'true', html: '&#128172;' }),
+        el('span', { className: 'slos-fab-text', text: cfg.fab_label || '免費網站增長檢查' })
+      ]);
+      root.appendChild(fab);
+    }
 
     var overlay = el('div', { className: 'slos-overlay', onClick: closeModal });
-    var modal = el('div', { className: 'slos-modal', role: 'dialog', 'aria-modal': 'true' });
+    var positionClass = {
+      top_left: 'slos-pos-top-left',
+      top_right: 'slos-pos-top-right',
+      center: 'slos-pos-center',
+      bottom_left: 'slos-pos-bottom-left',
+      bottom_right: 'slos-pos-bottom-right'
+    }[cfg.dialog_position] || 'slos-pos-bottom-right';
+    var modal = el('div', {
+      className: 'slos-modal ' + positionClass,
+      id: 'slos-modal',
+      role: 'dialog',
+      'aria-modal': 'true',
+      'aria-labelledby': 'slos-modal-title'
+    });
     var header = el('div', { className: 'slos-header' }, [
       el('div', {}, [
-        el('h2', { className: 'slos-title', text: cfg.popup_title || '' }),
+        el('h2', { className: 'slos-title', id: 'slos-modal-title', text: cfg.popup_title || '' }),
         el('p', { className: 'slos-subtitle', text: cfg.popup_subtitle || '' })
       ]),
       el('button', { type: 'button', className: 'slos-close', 'aria-label': cfg.close_label || 'Close', text: '×', onClick: closeModal })
@@ -253,18 +337,48 @@
     modal.appendChild(header);
     modal.appendChild(body);
     modal.appendChild(footer);
-    root.appendChild(fab);
     root.appendChild(overlay);
     root.appendChild(modal);
+
+    var linkNodes = document.querySelectorAll('a[href]');
+    Array.prototype.forEach.call(linkNodes, function (link) {
+      if (isEnquiryHref(link)) armEnquiryLink(link);
+    });
+
+    document.addEventListener('click', onEnquiryTriggerClick, true);
+    document.addEventListener('auxclick', onEnquiryTriggerClick, true);
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Escape' && ev.key !== 'Esc') return;
+      if (!modal.classList.contains('is-open')) return;
+      ev.preventDefault();
+      closeModal();
+    });
+
+    window.SutorLeadOSControls = {
+      open: function (trigger) { openModal(trigger); }
+    };
+    if (window.__slosPendingTrigger) {
+      openModal(window.__slosPendingTrigger);
+      window.__slosPendingTrigger = null;
+    }
 
     if (document.querySelector('[data-slos-open]')) {
       openModal();
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mount);
-  } else {
+  function start() {
+    if (root && root.getAttribute('data-slos-booted') === '1') return true;
+    var found = document.getElementById('sutor-lead-os-root');
+    if (!found) return false;
+    root = found;
+    root.setAttribute('data-slos-booted', '1');
     mount();
+    return true;
+  }
+
+  if (!start()) {
+    document.addEventListener('DOMContentLoaded', start);
   }
 })();
