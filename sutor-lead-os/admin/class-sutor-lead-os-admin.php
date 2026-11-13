@@ -89,7 +89,7 @@ class Sutor_Lead_OS_Admin {
 			<?php elseif ( '0' === $updated ) : ?>
 				<div class="notice notice-error is-dismissible"><p>Could not save settings.</p></div>
 			<?php endif; ?>
-			<p class="description">Edit the floating popup title, questions, answers, qualification rules and WhatsApp message. Each site stores its own config in WordPress options — no code changes needed.</p>
+			<p class="description">Edit the floating popup title, questions, answers, qualification rules and WhatsApp message. Each site stores its own config in WordPress options — no code changes needed. Place <code>[sutor_enquiry]</code> anywhere you want an enquiry button.</p>
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" id="slos-settings-form">
 				<input type="hidden" name="action" value="sutor_lead_os_save" />
@@ -100,7 +100,7 @@ class Sutor_Lead_OS_Admin {
 				<div class="slos-toggle-row">
 					<div>
 						<h2 style="margin:0 0 4px">Lead popup</h2>
-						<p class="description" style="margin:0">Turn the floating button and popup on or off without deactivating the plugin. Leads page and settings stay available.</p>
+						<p class="description" style="margin:0">Turn the floating button and popup on or off without deactivating the plugin. Leads page and settings stay available. The enquiry shortcode follows this switch.</p>
 					</div>
 					<label class="slos-switch" for="slos-enabled">
 						<input type="checkbox" id="slos-enabled" <?php checked( ! empty( $settings['enabled'] ) ); ?> />
@@ -119,6 +119,7 @@ class Sutor_Lead_OS_Admin {
 						<label>Submit button text <input type="text" id="slos-cta-label" value="<?php echo esc_attr( $settings['cta_label'] ); ?>" /></label>
 						<label>Close label <input type="text" id="slos-close-label" value="<?php echo esc_attr( $settings['close_label'] ); ?>" /></label>
 						<label class="slos-check"><input type="checkbox" id="slos-auto-fab" <?php checked( ! empty( $settings['auto_show_fab'] ) ); ?> /> Auto-show floating button site-wide</label>
+						<p class="description">Uncheck this to hide the floating button. <code>[sutor_enquiry]</code> still opens the same popup.</p>
 					</section>
 
 					<section class="slos-card">
@@ -134,6 +135,15 @@ class Sutor_Lead_OS_Admin {
 					</section>
 				</div>
 
+
+				<section class="slos-card">
+					<h2>Enquiry button shortcode</h2>
+					<p class="description">Paste a button into a page, post, text widget, or a page-builder shortcode block. It opens the same enquiry popup as the floating button, including when <strong>Auto-show floating button</strong> is turned off.</p>
+					<p><code>[sutor_enquiry]</code></p>
+					<p><code>[sutor_enquiry label="立即查詢" align="center"]</code></p>
+					<p class="description">Default label is the floating button label<?php echo '' !== trim( (string) $settings['fab_label'] ) ? ' (currently <code>' . esc_html( $settings['fab_label'] ) . '</code>)' : ''; ?>. Optional attributes: <code>label</code>, <code>align</code> (<code>left</code>, <code>center</code>, <code>right</code>), <code>class</code>, <code>id</code>, and <code>open="1"</code> to open the popup immediately.</p>
+					<p class="description"><code>[sutor_lead_os]</code> loads the popup on that page and opens it immediately. <code>[sutor_lead_os label="免費咨詢"]</code> renders a button.</p>
+				</section>
 
 				<section class="slos-card">
 					<div class="slos-card-head">

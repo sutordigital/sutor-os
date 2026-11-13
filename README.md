@@ -12,7 +12,7 @@ Reusable WordPress plugin for floating WhatsApp lead capture. Each site edits it
    - WhatsApp number (digits with country code, e.g. `85295420762`)
    - Questions + answer options (repeater UI)
    - Qualification rules (OR logic, evaluated server-side)
-4. Leave **Auto-show floating button** on, or place shortcode `[sutor_lead_os]` on specific pages.
+4. Leave **Auto-show floating button** on, place `[sutor_lead_os]` to open the popup on specific pages, or paste `[sutor_enquiry]` wherever you want an enquiry button.
 5. Import `gtm-container.json` into Google Tag Manager (or recreate the three triggers/tags). Set GA4 Measurement ID and Google Ads conversion ID/label variables.
 
 ### SiteGround note
@@ -67,9 +67,44 @@ Never put names, phones or emails in dataLayer.
 
 See `supabase/migration.sql` and `supabase/sutor-lead-ingest/index.ts`. Leave URL/key blank to keep everything in WordPress only.
 
-## Shortcode
+## Shortcodes
 
-`[sutor_lead_os]` — also opens the modal when present on the page.
+### Enquiry button — `[sutor_enquiry]`
+
+Paste this into a page, post, text widget, or a page-builder shortcode block. It prints a button that opens the **same** enquiry popup as the floating button (same questions, lead save, qualification, GTM events, and WhatsApp handoff).
+
+The button still works when **Auto-show floating button** is off. On that page the plugin loads the popup assets and does not render the floating button unless `[sutor_lead_os]` is also present. The **Lead popup** switch in Form Settings must stay on — that switch turns the popup itself off.
+
+```
+[sutor_enquiry]
+```
+
+The label defaults to the floating button label from **Lead OS → Form Settings** (shipped default: `免費咨詢`).
+
+```
+[sutor_enquiry label="立即查詢"]
+[sutor_enquiry label="WhatsApp 查詢" align="center"]
+[sutor_enquiry label="免費咨詢" class="my-cta" id="hero-enquiry" align="right"]
+[sutor_enquiry open="1"]
+```
+
+| Attribute | Description |
+| --- | --- |
+| `label` | Button text. Defaults to the floating button label, then `免費咨詢`. |
+| `align` | `left` (default), `center`, or `right`. |
+| `class` | Extra CSS classes added to the button. |
+| `id` | Optional `id` on the button. |
+| `open` | Set to `1` to also open the popup as soon as the page loads. |
+
+`[sutor_lead_os label="免費咨詢"]` and `[sutor_lead_os button="1"]` render the same button.
+
+### Auto-open on a page — `[sutor_lead_os]`
+
+```
+[sutor_lead_os]
+```
+
+Loads the popup on that page and opens it immediately. With **Auto-show floating button** turned off, pages that use this shortcode still show the floating button so the form can be reopened.
 
 ## Requirements
 

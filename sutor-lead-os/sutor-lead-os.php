@@ -3,7 +3,7 @@
  * Plugin Name: Sutor Lead OS
  * Plugin URI: https://sutor.digital/
  * Description: Reusable WhatsApp lead capture popup with editable questions, server-side qualification, GTM events, and optional Supabase forward.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Sutor Digital
  * Author URI: https://sutor.digital/
  * Text Domain: sutor-lead-os
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SUTOR_LEAD_OS_VERSION', '1.0.4' );
+define( 'SUTOR_LEAD_OS_VERSION', '1.0.5' );
 define( 'SUTOR_LEAD_OS_FILE', __FILE__ );
 define( 'SUTOR_LEAD_OS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SUTOR_LEAD_OS_URL', plugin_dir_url( __FILE__ ) );
