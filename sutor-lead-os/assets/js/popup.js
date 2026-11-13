@@ -239,7 +239,7 @@
           } catch (e) {}
           window.open(wa, '_blank', 'noopener');
         }
-        setStatus('已儲存。Lead ID: ' + d.lead_id);
+        setStatus('已儲存。');
         submitting = false;
         if (btn) btn.disabled = false;
       })
