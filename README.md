@@ -67,6 +67,20 @@ Never put names, phones or emails in dataLayer.
 
 See `supabase/migration.sql` and `supabase/sutor-lead-ingest/index.ts`. Leave URL/key blank to keep everything in WordPress only.
 
+## Dialog position
+
+**Lead OS → Form Settings → Dialog position** (`dialog_position`) chooses where the enquiry dialog opens. The floating button, `[sutor_enquiry]`, and `[sutor_enquiry_link]` all use this position. The floating button itself stays in the bottom-right corner.
+
+| Value | Label |
+| --- | --- |
+| `top_left` | Top left |
+| `top_right` | Top right |
+| `center` | Middle (center of the screen) |
+| `bottom_left` | Low left (bottom left) |
+| `bottom_right` | Low right (bottom right) |
+
+`bottom_right` is the default, so existing sites stay in the bottom-right corner until the setting is changed. On small screens that default is still the full-width sheet along the bottom. Other positions stay inset on both desktop and mobile, and a long form scrolls inside the dialog.
+
 ## Shortcodes
 
 ### Enquiry button — `[sutor_enquiry]`

@@ -99,6 +99,7 @@ body.slos-lock .elementor-location-popup {
   width: min(400px, calc(100vw - 24px)) !important;
   max-width: calc(100vw - 24px) !important;
   max-height: min(78vh, 720px) !important;
+  margin: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
@@ -116,6 +117,53 @@ body.slos-lock .elementor-location-popup {
   transform: none;
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Dialog position. Low right is the default and matches the base rule above. */
+#sutor-lead-os-root .slos-modal.slos-pos-top-left,
+#sutor-lead-os-root .slos-modal.slos-pos-top-right,
+#sutor-lead-os-root .slos-modal.slos-pos-bottom-left,
+#sutor-lead-os-root .slos-modal.slos-pos-center {
+  width: min(400px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  max-height: min(78vh, 720px, calc(100vh - 32px)) !important;
+  max-height: min(78vh, 720px, calc(100dvh - 32px)) !important;
+}
+#sutor-lead-os-root .slos-modal.slos-pos-top-left {
+  top: max(16px, env(safe-area-inset-top, 0px)) !important;
+  left: max(16px, env(safe-area-inset-left, 0px)) !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translateY(-12px) scale(0.98) !important;
+}
+#sutor-lead-os-root .slos-modal.slos-pos-top-right {
+  top: max(16px, env(safe-area-inset-top, 0px)) !important;
+  right: max(16px, env(safe-area-inset-right, 0px)) !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: translateY(-12px) scale(0.98) !important;
+}
+#sutor-lead-os-root .slos-modal.slos-pos-bottom-left {
+  left: max(16px, env(safe-area-inset-left, 0px)) !important;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
+  right: auto !important;
+  top: auto !important;
+  transform: translateY(12px) scale(0.98) !important;
+}
+#sutor-lead-os-root .slos-modal.slos-pos-center {
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, calc(-50% + 12px)) scale(0.98) !important;
+}
+#sutor-lead-os-root .slos-modal.slos-pos-top-left.is-open,
+#sutor-lead-os-root .slos-modal.slos-pos-top-right.is-open,
+#sutor-lead-os-root .slos-modal.slos-pos-bottom-left.is-open {
+  transform: none !important;
+}
+#sutor-lead-os-root .slos-modal.slos-pos-center.is-open {
+  transform: translate(-50%, -50%) !important;
 }
 
 #sutor-lead-os-root .slos-header {
@@ -321,13 +369,24 @@ body.slos-lock .elementor-location-popup {
     padding: 11px 14px !important;
     font-size: 13px !important;
   }
-  #sutor-lead-os-root .slos-modal {
+  #sutor-lead-os-root .slos-modal:not(.slos-pos-top-left):not(.slos-pos-top-right):not(.slos-pos-center):not(.slos-pos-bottom-left) {
     right: 0 !important;
     left: 0 !important;
     bottom: 0 !important;
+    top: auto !important;
     width: 100% !important;
     max-width: 100% !important;
     max-height: min(92vh, 100dvh) !important;
     border-radius: 18px 18px 0 0 !important;
+  }
+  #sutor-lead-os-root .slos-modal.slos-pos-top-left,
+  #sutor-lead-os-root .slos-modal.slos-pos-top-right,
+  #sutor-lead-os-root .slos-modal.slos-pos-bottom-left,
+  #sutor-lead-os-root .slos-modal.slos-pos-center {
+    width: min(400px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: min(88vh, calc(100vh - 24px)) !important;
+    max-height: min(88dvh, calc(100dvh - 24px)) !important;
+    border-radius: 18px !important;
   }
 }

@@ -120,6 +120,24 @@ class Sutor_Lead_OS_Admin {
 						<label>Close label <input type="text" id="slos-close-label" value="<?php echo esc_attr( $settings['close_label'] ); ?>" /></label>
 						<label class="slos-check"><input type="checkbox" id="slos-auto-fab" <?php checked( ! empty( $settings['auto_show_fab'] ) ); ?> /> Auto-show floating button site-wide</label>
 						<p class="description">Uncheck this to hide the floating button. <code>[sutor_enquiry]</code> still opens the same popup.</p>
+						<?php
+						$dialog_position = isset( $settings['dialog_position'] ) ? $settings['dialog_position'] : 'bottom_right';
+						$dialog_positions = array(
+							'top_left'     => 'Top left',
+							'top_right'    => 'Top right',
+							'center'       => 'Middle (center of the screen)',
+							'bottom_left'  => 'Low left (bottom left)',
+							'bottom_right' => 'Low right (bottom right)',
+						);
+						?>
+						<label>Dialog position
+							<select id="slos-dialog-position">
+								<?php foreach ( $dialog_positions as $value => $label ) : ?>
+									<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $dialog_position, $value ); ?>><?php echo esc_html( $label ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</label>
+						<p class="description">Where the enquiry dialog opens for the floating button, <code>[sutor_enquiry]</code>, and <code>[sutor_enquiry_link]</code>. Default is <strong>Low right</strong>. The floating button itself stays in the bottom-right corner.</p>
 					</section>
 
 					<section class="slos-card">

@@ -302,8 +302,15 @@
     }
 
     var overlay = el('div', { className: 'slos-overlay', onClick: closeModal });
+    var positionClass = {
+      top_left: 'slos-pos-top-left',
+      top_right: 'slos-pos-top-right',
+      center: 'slos-pos-center',
+      bottom_left: 'slos-pos-bottom-left',
+      bottom_right: 'slos-pos-bottom-right'
+    }[cfg.dialog_position] || 'slos-pos-bottom-right';
     var modal = el('div', {
-      className: 'slos-modal',
+      className: 'slos-modal ' + positionClass,
       id: 'slos-modal',
       role: 'dialog',
       'aria-modal': 'true',

@@ -25,3 +25,7 @@ Use your own link or page-builder button. The URL opens the same popup and does 
 `<a href="[sutor_enquiry_link]">免費咨詢</a>`
 
 Paste `[sutor_enquiry_link]` into a link URL field. If the builder does not expand shortcodes, that literal href still works (including `http://[sutor_enquiry_link]`). The expanded URL is `#sutor-enquiry`.
+
+== Dialog position ==
+
+Lead OS → Form Settings → Dialog position. Default is Low right (`bottom_right`), the bottom-right corner. Other choices: Top left, Top right, Middle (center of the screen), Low left (bottom left). The floating button stays in the bottom-right corner.
